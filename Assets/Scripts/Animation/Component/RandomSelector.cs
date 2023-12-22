@@ -13,16 +13,26 @@ namespace zAnimation
         public int currentIndex { get; private set; }
         public int clipCount { get; private set; } 
         private AnimationMixerPlayable m_mixer;
+        private List<float> m_enterTimes;
+        private List<float> m_clipLength;
         public RandomSelector(PlayableGraph graph):base(graph)
         {
             m_mixer = AnimationMixerPlayable.Create(graph);
             m_adapterPlayable.AddInput(m_mixer, 0, 1f);
             currentIndex = -1;
+            m_enterTimes = new List<float>();
+            m_clipLength = new List<float>();
         }
         public override void AddInput(Playable playable)
         {
             m_mixer.AddInput(playable,0);
             clipCount++;
+        }
+        public void AddInput(AnimationClip clip, float enterTime)
+        {
+            AddInput(new AnimUnit(m_adapterPlayable.GetGraph(), clip, enterTime));
+            m_clipLength.Add(clip.length);
+            m_enterTimes.Add(enterTime);
         }
         public override void Enable()
         {
@@ -49,6 +59,22 @@ namespace zAnimation
         {
             currentIndex = UnityEngine.Random.Range(0, clipCount);
             return currentIndex;
+        }
+        public override float GetEnterTime()
+        {
+            if(currentIndex>=0f && currentIndex < m_enterTimes.Count)
+            {
+                return m_enterTimes[currentIndex];
+            }
+            return 0f;
+        }
+        public override float GetAnimLength()
+        {
+            if (currentIndex >= 0f && currentIndex < m_clipLength.Count)
+            {
+                return m_clipLength[currentIndex];
+            }
+            return 0f;
         }
     }
 }

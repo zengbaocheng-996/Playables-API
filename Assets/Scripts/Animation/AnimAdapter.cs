@@ -27,7 +27,7 @@ namespace zAnimation
         }
         public float GetEnterTime()
         {
-            return m_behaviour.enterTime;
+            return m_behaviour.GetEnterTime();
         }
         public override void OnGraphStop(Playable playable)
         {

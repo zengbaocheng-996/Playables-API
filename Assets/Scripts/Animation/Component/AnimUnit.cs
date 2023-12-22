@@ -12,6 +12,7 @@ namespace zAnimation
         {
             m_anim = AnimationClipPlayable.Create(graph, clip);
             m_adapterPlayable.AddInput(m_anim, 0, 1f);
+            m_animLength = clip.length;
             Disable();
         }
 
